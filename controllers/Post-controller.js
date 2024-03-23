@@ -64,3 +64,37 @@ export const getPostById = async (req, res) => {
   }
   return res.status(200).json({ post });
 };
+export const updatePost = async (req, res) => {
+  const id = req.params.id;
+  const { title, description, location, date, image } = req.body;
+
+  if (
+    !title &&
+    title.trim() === "" &&
+    !description &&
+    description.trim() === "" &&
+    !location &&
+    location.trim() === "" &&
+    !date &&
+    !image &&
+    image.trim() === ""
+  ) {
+    return res.status(422).json({ message: "Invalid Data" });
+  }
+  let post;
+  try {
+    post = await Post.findByIdAndUpdate(id, {
+      title,
+      description,
+      image,
+      location,
+      date: new Date(`${date}`),
+    });
+  } catch (err) {
+    return console.log(err);
+  }
+  if (!post) {
+    return res.status(500).json({ message: "Unable to update" });
+  }
+  return res.status(200).json({ message: "Updated Successfully" });
+};
