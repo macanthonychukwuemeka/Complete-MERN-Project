@@ -98,3 +98,17 @@ export const updatePost = async (req, res) => {
   }
   return res.status(200).json({ message: "Updated Successfully" });
 };
+
+export const deletePost = async (req, res) => {
+  const id = req.params.id;
+  let post;
+  try {
+    post = await Post.findByIdAndDelete(id);
+  } catch (err) {
+    console.log(err);
+  }
+  if (!post) {
+    return res.status(500).json({ message: "Unable to Delete" });
+  }
+  return res.status(200).json({ message: "Message Deleted" });
+};
