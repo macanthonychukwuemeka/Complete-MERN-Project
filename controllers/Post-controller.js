@@ -131,12 +131,19 @@ export const deletePost = async (req, res) => {
   const id = req.params.id;
   let post;
   try {
-    post = await Post.findByIdAndDelete(id);
+    // post = await Post.findByIdAndDelete(id);
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    post = await Post.findById(id).populate("user");
+    post.user.posts.pull(post);
+    await post.user.save({ session });
+    post = await Post.findByIdAndRemove(id);
+    session.commitTransaction();
   } catch (err) {
     console.log(err);
   }
   if (!post) {
     return res.status(500).json({ message: "Unable to Delete" });
   }
-  return res.status(200).json({ message: "Message Deleted" });
+  return res.status(200).json({ message: "Deleted Successfully" });
 };
