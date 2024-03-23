@@ -46,7 +46,9 @@ export const signup = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
   const { email, password } = req.body;
-  if (!email && email.trim() === "" && !password && password.length < 6) {
+  // if (!email && email.trim() === "" && !password && password.length < 6)
+
+  if (!email || email.trim() === "" || !password || password.length < 6) {
     return res.status(422).json({ message: "invalid Data" });
     // the 422 error code stands for unprecessible entity
   }

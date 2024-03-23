@@ -1,5 +1,6 @@
+import mongoose from "mongoose";
 import Post from "../models/Post";
-
+import User from "../models/User";
 export const getAllPosts = async (req, res) => {
   let posts;
   try {
@@ -15,24 +16,44 @@ export const getAllPosts = async (req, res) => {
 export const addPost = async (req, res) => {
   const { title, description, location, date, image, user } = req.body;
 
+  // if (
+  //   !title &&
+  //   title.trim() === "" &&
+  //   !description &&
+  //   description.trim() === "" &&
+  //   !location &&
+  //   location.trim() === "" &&
+  //   !date &&
+  //   !user &&
+  //   !image &&
+  //   image.trim() === ""
+  // ) {
+  //   return res.status(422).json({ message: "Invalid Data" });
+  // }
+
   if (
-    !title &&
-    title.trim() === "" &&
-    !description &&
-    description.trim() === "" &&
-    !location &&
-    location.trim() === "" &&
-    !date &&
-    !user &&
-    !image &&
-    image.trim() === ""
+    (!title || title.trim() === "") &&
+    (!description || description.trim() === "") &&
+    (!location || location.trim() === "") &&
+    (!image || image.trim() === "")
   ) {
     return res.status(422).json({ message: "Invalid Data" });
   }
-  let post;
-  let newPost;
+
+  let existingUser;
   try {
-    newPost = new Post({
+    existingUser = await User.findById(user);
+  } catch (err) {
+    console.log(err);
+  }
+  if (!existingUser) {
+    return res.status(404).json({ message: "User not Found" });
+  }
+
+  let post;
+  // let newPost;
+  try {
+    post = new Post({
       title,
       description,
       image,
@@ -40,7 +61,14 @@ export const addPost = async (req, res) => {
       date: new Date(`${date}`),
       user,
     });
-    post = await newPost.save();
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    existingUser.posts.push(post);
+    await existingUser.save({ session });
+    post = await post.save({ session });
+    session.commitTransaction();
+    // post = await newPost.save(session);
   } catch (err) {
     return console.log(err);
   }
