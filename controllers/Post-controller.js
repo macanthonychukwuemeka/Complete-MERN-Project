@@ -16,29 +16,30 @@ export const getAllPosts = async (req, res) => {
 export const addPost = async (req, res) => {
   const { title, description, location, date, image, user } = req.body;
 
-  // if (
-  //   !title &&
-  //   title.trim() === "" &&
-  //   !description &&
-  //   description.trim() === "" &&
-  //   !location &&
-  //   location.trim() === "" &&
-  //   !date &&
-  //   !user &&
-  //   !image &&
-  //   image.trim() === ""
-  // ) {
-  //   return res.status(422).json({ message: "Invalid Data" });
-  // }
-
   if (
-    (!title || title.trim() === "") &&
-    (!description || description.trim() === "") &&
-    (!location || location.trim() === "") &&
-    (!image || image.trim() === "")
+    !title &&
+    title.trim() === "" &&
+    !description &&
+    description.trim() === "" &&
+    !location &&
+    location.trim() === "" &&
+    !date &&
+    !user &&
+    !image &&
+    image.trim() === ""
   ) {
     return res.status(422).json({ message: "Invalid Data" });
   }
+
+  // if (
+  //   (!title || title.trim() === "") &&
+  //   (!description || description.trim() === "") &&
+  //   (!location || location.trim() === "") &&
+  //   (!date ||)
+  //   (!image || image.trim() === "")
+  // ) {
+  //   return res.status(422).json({ message: "Invalid Data" });
+  // }
 
   let existingUser;
   try {
