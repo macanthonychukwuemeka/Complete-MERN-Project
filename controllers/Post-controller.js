@@ -1,6 +1,7 @@
-import mongoose from "mongoose";
+import mongoose, { mongo, startSession } from "mongoose";
 import Post from "../models/Post";
 import User from "../models/User";
+
 export const getAllPosts = async (req, res) => {
   let posts;
   try {
@@ -45,7 +46,7 @@ export const addPost = async (req, res) => {
   try {
     existingUser = await User.findById(user);
   } catch (err) {
-    console.log(err);
+    return console.log(err);
   }
   if (!existingUser) {
     return res.status(404).json({ message: "User not Found" });
